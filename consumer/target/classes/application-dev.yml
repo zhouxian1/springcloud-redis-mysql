@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: consumer-server
+server:
+  port: 8082
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8080/eureka #注册到Eureka的地址
+    registry-fetch-interval-seconds: 10
+
+ribbon:
+  OkToRetryOnAllOperations: false #对所有操作请求都进行重试,默认false
+  ReadTimeout: 10000   #负载均衡超时时间，默认值5000
+  ConnectTimeout: 2000 #ribbon请求连接的超时时间，默认值2000
+  MaxAutoRetries: 0     #对当前实例的重试次数，默认0
+  MaxAutoRetriesNextServer: 1 #对切换实例的重试次数，默认1
+
+feign:
+  hystrix:
+    enabled: true # 开启Feign的熔断功能
+  compression:
+    request:
+      enabled: true
+      mime-types: text/html,application/xml,application/json # 设置压缩的数据类型
+      min-request-size: 2048 # 设置触发压缩的大小下限
+    response:
+      enabled: true
+
+hystrix:
+  command:
+    default:  #default全局有效，service id指定应用有效
+      circuitBreaker:
+        errorThresholdPercentage: 50 # 触发熔断错误比例阈值，默认值50%      
+        sleepWindowInMilliseconds: 10000 # 熔断后休眠时长，默认值5秒      
+        requestVolumeThreshold: 10 # 熔断触发小请求次数，默认值是20
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000 #断路器超时时间，默认1000ms
+
+logging:
+  level:
+    com.zhouxian: debug
